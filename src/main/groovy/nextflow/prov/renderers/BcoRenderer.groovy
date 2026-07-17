@@ -121,7 +121,13 @@ class BcoRenderer implements Renderer {
                 ] },
             ],
             "execution_domain": [
-                "script": [ normalizePath(metadata.scriptFile) ],
+                "script": [
+                    [
+                        "uri": [
+                            "uri": normalizePath(metadata.scriptFile)
+                        ]
+                    ]
+                ],
                 "script_driver": "nextflow",
                 "software_prerequisites": [
                     [
