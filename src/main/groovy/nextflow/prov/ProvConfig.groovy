@@ -108,9 +108,16 @@ class ProvBcoConfig implements ConfigScope {
     ''')
     final boolean overwrite
 
+    @ConfigOption
+    @Description('''
+        When `true` records the execution command-line in the usability domain (default: `false`).
+    ''')
+    final boolean recordCommandLine
+
     ProvBcoConfig(Map opts) {
         file = opts.file
         overwrite = opts.overwrite as boolean
+        recordCommandLine = opts.recordCommandLine as boolean
     }
 }
 
@@ -180,9 +187,16 @@ class ProvWrrocConfig implements ConfigScope {
     ''')
     final String license
 
+    @ConfigOption
+    @Description('''
+        When `true` records the execution command-line in the action description (default: `false`).
+    ''')
+    final boolean recordCommandLine
+
     ProvWrrocConfig(Map opts) {
         file = opts.file
         overwrite = opts.overwrite as boolean
         license = opts.license
+        recordCommandLine = opts.recordCommandLine as boolean
     }
 }

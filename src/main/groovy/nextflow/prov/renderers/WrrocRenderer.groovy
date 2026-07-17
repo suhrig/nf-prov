@@ -57,6 +57,8 @@ class WrrocRenderer implements Renderer {
 
     private boolean overwrite
 
+    private boolean recordCommandLine
+
     @Delegate
     private PathNormalizer normalizer
 
@@ -66,6 +68,7 @@ class WrrocRenderer implements Renderer {
     WrrocRenderer(ProvWrrocConfig config) {
         path = (config.file as Path).complete()
         overwrite = config.overwrite
+        recordCommandLine = config.recordCommandLine
 
         ProvHelper.checkFileOverwrite(path, overwrite)
     }
@@ -617,11 +620,12 @@ class WrrocRenderer implements Renderer {
                     "startTime" : dateStarted,
                     "endTime"   : dateCompleted
                 ],
-                [
+                withoutNulls([
                     "@id"       : "#${session.uniqueId}",
                     "@type"     : "CreateAction",
                     "agent"     : agent ? ["@id": agent["@id"]] : null,
                     "name"      : "Nextflow workflow run ${session.uniqueId}",
+                    "description": recordCommandLine && metadata.commandLine ? "Command-line: " + metadata.commandLine : null,
                     "startTime" : dateStarted,
                     "endTime"   : dateCompleted,
                     "instrument": ["@id": mainScriptId],
@@ -630,7 +634,7 @@ class WrrocRenderer implements Renderer {
                         *asReferences(inputFiles),
                     ],
                     "result"    : asReferences(outputFiles)
-                ],
+                ]),
                 agent,
                 organization,
                 *contactPoints,

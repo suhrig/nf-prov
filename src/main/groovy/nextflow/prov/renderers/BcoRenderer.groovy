@@ -46,12 +46,15 @@ class BcoRenderer implements Renderer {
 
     private boolean overwrite
 
+    private boolean recordCommandLine
+
     @Delegate
     private PathNormalizer normalizer
 
     BcoRenderer(ProvBcoConfig config) {
         path = (config.file as Path).complete()
         overwrite = config.overwrite
+        recordCommandLine = config.recordCommandLine
 
         ProvHelper.checkFileOverwrite(path, overwrite)
     }
@@ -84,6 +87,10 @@ class BcoRenderer implements Renderer {
         final xref                    = config.navigate('prov.formats.bco.description_domain.xref', []) as List<Map<String,?>>
         final external_data_endpoints = config.navigate('prov.formats.bco.execution_domain.external_data_endpoints', []) as List<Map<String,String>>
         final environment_variables   = config.navigate('prov.formats.bco.execution_domain.environment_variables', []) as List<String>
+
+        if( recordCommandLine && metadata.commandLine ) {
+            usability.add(0, "Command-line: " + metadata.commandLine)
+        }
 
         // create BCO manifest
         final bco = [
