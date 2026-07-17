@@ -100,7 +100,7 @@ class BcoRenderer implements Renderer {
                 "created": dateCreated,
                 "modified": dateCreated,
                 "contributors": contributors,
-                "license": manifest.license
+                "license": manifest.license ?: ""
             ],
             "usability_domain": usability,
             "extension_domain": [],
@@ -198,7 +198,27 @@ class BcoRenderer implements Renderer {
         bco.etag = etag.toString()
 
         // render BCO manifest to JSON file
-        path.text = JsonOutput.prettyPrint(JsonOutput.toJson(bco))
+        path.text = JsonOutput.prettyPrint(JsonOutput.toJson(removeNulls(bco)))
+    }
+
+    private static Object removeNulls(Object value) {
+        if (value instanceof Map) {
+            return ((Map) value).collectEntries { k, v ->
+                if (v instanceof Map || v instanceof List) {
+                    [k, removeNulls(v)]
+                } else if (v != null) {
+                    [k, v]
+                } else {
+                    [:]
+                }
+            }
+        } else if (value instanceof List) {
+            return ((List) value).collect { v ->
+                removeNulls(v)
+            }.findAll { it != null }
+        } else {
+            return value
+        }
     }
 
     private List getContributors(Manifest manifest) {
